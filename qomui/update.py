@@ -27,6 +27,7 @@ except AttributeError:
 
 TEMPDIR = "/usr/share/qomui/temp"
 
+
 def country_translate(cc):
     try:
         with open("{}/countries.json".format(config.ROOTDIR), "r") as c_json:
@@ -184,19 +185,19 @@ class AddServers(QtCore.QThread):
             for mode in server_xml_root[modes]:
                 try:
                     self.airvpn_protocols["protocol_{}".format(n)] = {
-                                        "protocol" : mode.attrib["protocol"].upper(),
-                                        "port" : mode.attrib["port"],
-                                        "ip" : "ip" + str(int(mode.attrib["entry_index"])+1),
-                                        "ipv6" : "ipv4"
-                                        }
+                        "protocol" : mode.attrib["protocol"].upper(),
+                        "port" : mode.attrib["port"],
+                        "ip" : "ip" + str(int(mode.attrib["entry_index"])+1),
+                        "ipv6" : "ipv4"
+                    }
 
                     n+=1
                     self.airvpn_protocols["protocol_{}".format(n)] = {
-                                        "protocol" : mode.attrib["protocol"].upper(),
-                                        "port" : mode.attrib["port"],
-                                        "ip" : "ip" + str(int(mode.attrib["entry_index"])+1),
-                                        "ipv6" : "ipv6"
-                                        }
+                        "protocol" : mode.attrib["protocol"].upper(),
+                        "port" : mode.attrib["port"],
+                        "ip" : "ip" + str(int(mode.attrib["entry_index"])+1),
+                        "ipv6" : "ipv6"
+                    }
                     n+=1
                 except KeyError:
                     pass
@@ -207,12 +208,12 @@ class AddServers(QtCore.QThread):
                 try:
                     country = country_translate(server.attrib["country_code"])
                     self.airvpn_servers[server.attrib["name"]] = {
-                                        "name" : server.attrib["name"],
-                                        "provider": "Airvpn",
-                                        "city": server.attrib["location"],
-                                        "country" : country,
-                                        "tunnel" : "OpenVPN"
-                                        }
+                        "name" : server.attrib["name"],
+                        "provider": "Airvpn",
+                        "city": server.attrib["location"],
+                        "country" : country,
+                        "tunnel" : "OpenVPN"
+                    }
 
                     self.log.emit(("debug", "Importing {}".format(server.attrib["name"])))
                     ips = server.attrib["ips_entry"].split(",")
@@ -224,11 +225,11 @@ class AddServers(QtCore.QThread):
 
 
             airvpn_data = {
-                            "server" : self.airvpn_servers,
-                            "protocol" : self.airvpn_protocols,
-                            "provider" : "Airvpn",
-                            "airvpn_key" : self.key
-                            }
+                "server" : self.airvpn_servers,
+                "protocol" : self.airvpn_protocols,
+                "provider" : "Airvpn",
+                "airvpn_key" : self.key
+            }
 
             self.copy_certs(self.provider)
             self.finished.emit(airvpn_data)
@@ -238,7 +239,6 @@ class AddServers(QtCore.QThread):
             m = "Airvpn download failed&Perhaps the credentials you entered are wrong&{}".format(self.provider)
             self.remove_temp_dir(self.provider)
             self.failed.emit(m)
-
 
         except Exception as e:
             self.log.emit(("debug", e.args))
@@ -264,11 +264,11 @@ class AddServers(QtCore.QThread):
     def call_air_api(self, payload):
         try:
             xml = requests.post(
-                                "http://54.93.175.114",
-                                data=payload,
-                                cert="{}/airvpn_cacert.pem".format(config.ROOTDIR),
-                                timeout=2
-                                )
+                "http://54.93.175.114",
+                data=payload,
+                cert="{}/airvpn_cacert.pem".format(config.ROOTDIR),
+                timeout=2
+            )
             return xml
 
         except requests.exceptions.RequestException as e:
@@ -313,20 +313,20 @@ class AddServers(QtCore.QThread):
                         country = self.cc_translate(country_raw)
                         self.log.emit(("debug", "importing {}".format(server)))
                         self.mullvad_servers[server] = {
-                                                            "name" : server,
-                                                            "provider" : "Mullvad",
-                                                            "city" : city,
-                                                            "country" : country,
-                                                            "ip" : ip,
-                                                            "tunnel" : "OpenVPN"
-                                                            }
+                            "name" : server,
+                            "provider" : "Mullvad",
+                            "city" : city,
+                            "country" : country,
+                            "ip" : ip,
+                            "tunnel" : "OpenVPN"
+                        }
 
                 self.mullvad_protocols = {
-                                        "protocol_1" : {"protocol": "UDP", "port": "1194"},
-                                        "protocol_2" : {"protocol": "UDP", "port": "53"},
-                                        "protocol_3" : {"protocol": "TCP", "port": "80"},
-                                        "protocol_4" : {"protocol": "TCP", "port": "443"}
-                                        }
+                    "protocol_1" : {"protocol": "UDP", "port": "1194"},
+                    "protocol_2" : {"protocol": "UDP", "port": "53"},
+                    "protocol_3" : {"protocol": "TCP", "port": "80"},
+                    "protocol_4" : {"protocol": "TCP", "port": "443"}
+                }
                 try:
                     self.log.emit(("info", "Creating WireGuard config files for Mullvad"))
                     wg_list = []
@@ -347,34 +347,35 @@ class AddServers(QtCore.QThread):
                                     port = "51820"
                                     self.log.emit(("debug", "importing {}".format(server)))
                                     self.mullvad_servers[server] = {
-                                                                        "name" : server,
-                                                                        "provider" : "Mullvad",
-                                                                        "city" : city,
-                                                                        "country" : country,
-                                                                        "ip" : ip,
-                                                                        "port" : port,
-                                                                        "public_key" : public_key,
-                                                                        "tunnel" : "WireGuard"
-                                                                        }
+                                        "name" : server,
+                                        "provider" : "Mullvad",
+                                        "city" : city,
+                                        "country" : country,
+                                        "ip" : ip,
+                                        "port" : port,
+                                        "public_key" : public_key,
+                                        "tunnel" : "WireGuard"
+                                    }
 
                     wg_file = "mullvad_wg.conf"
                     wg_keys = self.gen_wg_key(wg_file)
                     if wg_keys is not None:
-                        data = [('account', self.username),
-                                ('pubkey', wg_keys[1])
-                                ]
+                        data = [
+                            ('account', self.username),
+                            ('pubkey', wg_keys[1])
+                        ]
 
                         pub_up = self.session.post("https://api.mullvad.net/wg/", data=data)
                         if pub_up.status_code < 400:
                             wg_address = pub_up.content.decode("utf-8").split("\n")[0]
 
                             wg_conf = [
-                                        "[Interface]\n",
-                                        "DNS = 193.138.219.228\n",
-                                        "\n",
-                                        "[Peer]\n",
-                                        "AllowedIPs = 0.0.0.0/0, ::/0\n"
-                                        ]
+                                "[Interface]\n",
+                                "DNS = 193.138.219.228\n",
+                                "\n",
+                                "[Peer]\n",
+                                "AllowedIPs = 0.0.0.0/0, ::/0\n"
+                            ]
 
                             with open("{}/{}".format(self.temp_path, wg_file), "w") as wg:
                                 wg_conf.insert(1, "PrivateKey = {}\n".format(wg_keys[0]))
@@ -395,10 +396,10 @@ class AddServers(QtCore.QThread):
 
                 if auth == 0:
                     Mullvad_dict = {
-                                    "server" : self.mullvad_servers,
-                                    "protocol" : self.mullvad_protocols,
-                                    "provider" : "Mullvad"
-                                    }
+                        "server" : self.mullvad_servers,
+                        "protocol" : self.mullvad_protocols,
+                        "provider" : "Mullvad"
+                    }
 
                     self.copy_certs(self.provider)
                     self.finished.emit(Mullvad_dict)
@@ -407,7 +408,6 @@ class AddServers(QtCore.QThread):
                 self.log.emit(("error", "Network error: Unable to retrieve data from mullvad.net"))
                 self.remove_temp_dir(self.provider)
                 self.failed.emit("Network error&No internet connection&{}".format(self.provider))
-
 
     def cc_translate(self, country_raw):
         if country_raw == "UK":
@@ -478,21 +478,21 @@ class AddServers(QtCore.QThread):
                 z.extractall(filepath)
 
             self.pia_protocols = {
-                                    "protocol_1" : {"protocol": "UDP", "port": "1197"},
-                                    "protocol_2" : {"protocol": "TCP", "port": "502"}
-                                    }
+                "protocol_1" : {"protocol": "UDP", "port": "1197"},
+                "protocol_2" : {"protocol": "TCP", "port": "502"}
+            }
 
             pia_dict = {
-                        "server" : self.pia_servers,
-                        "protocol" : self.pia_protocols,
-                        "provider" : "PIA",
-                        "tunnel" : "OpenVPN"
-                        }
+                "server" : self.pia_servers,
+                "protocol" : self.pia_protocols,
+                "provider" : "PIA",
+                "tunnel" : "OpenVPN"
+            }
 
             certificates = {
-                            "{}/strong/crl.rsa.4096.pem".format(self.temp_path) :"{}/pia_crl.rsa.4096.pem".format(self.temp_path),
-                            "{}/strong/ca.rsa.4096.crt".format(self.temp_path) :"{}/pia_ca.rsa.4096.crt".format(self.temp_path)
-                            }
+                "{}/strong/crl.rsa.4096.pem".format(self.temp_path): "{}/pia_crl.rsa.4096.pem".format(self.temp_path),
+                "{}/strong/ca.rsa.4096.crt".format(self.temp_path): "{}/pia_ca.rsa.4096.crt".format(self.temp_path)
+            }
 
             for orig, dest in certificates.items():
                 try:
@@ -543,13 +543,13 @@ class AddServers(QtCore.QThread):
                 self.session.headers.pop("Origin", None)
 
                 payload = {
-                            'login' : '1',
-                            'upgrade' : '0',
-                            'username' : self.username,
-                            'password' : self.password,
-                            'csrf_token' : csrf["csrf_token"],
-                            'csrf_time' : csrf["csrf_time"]
-                            }
+                    'login' : '1',
+                    'upgrade' : '0',
+                    'username' : self.username,
+                    'password' : self.password,
+                    'csrf_token' : csrf["csrf_token"],
+                    'csrf_time' : csrf["csrf_time"]
+                }
 
                 post = self.session.post(login_url, data=payload)
                 cred_url = "https://windscribe.com/getconfig/credentials"
@@ -614,41 +614,41 @@ class AddServers(QtCore.QThread):
                     country = country_translate(countrycode)
                     self.log.emit(("debug", "importing {}".format(name)))
                     self.windscribe_servers[name] = {
-                                                "name" : name,
-                                                "country" : country,
-                                                "ip" : ip,
-                                                "ip2" : ip2,
-                                                "city" : city,
-                                                "provider" : "Windscribe",
-                                                "tunnel" : "OpenVPN"
-                                                }
+                        "name" : name,
+                        "country" : country,
+                        "ip" : ip,
+                        "ip2" : ip2,
+                        "city" : city,
+                        "provider" : "Windscribe",
+                        "tunnel" : "OpenVPN"
+                    }
 
             except KeyError:
                 pass
 
         self.windscribe_protocols = {
-                                    "protocol_1" : {"protocol": "UDP", "port": "443"},
-                                    "protocol_2" : {"protocol": "UDP", "port": "80"},
-                                    "protocol_3" : {"protocol": "UDP", "port": "53"},
-                                    "protocol_4" : {"protocol": "UDP", "port": "1194"},
-                                    "protocol_5" : {"protocol": "UDP", "port": "54783"},
-                                    "protocol_6" : {"protocol": "TCP", "port": "443"},
-                                    "protocol_7" : {"protocol": "TCP", "port": "587"},
-                                    "protocol_8" : {"protocol": "TCP", "port": "21"},
-                                    "protocol_9" : {"protocol": "TCP", "port": "22"},
-                                    "protocol_10" : {"protocol": "TCP", "port": "80"},
-                                    "protocol_11" : {"protocol": "TCP", "port": "143"},
-                                    "protocol_12" : {"protocol": "TCP", "port": "3306"},
-                                    "protocol_13" : {"protocol": "TCP", "port": "8080"},
-                                    "protocol_14" : {"protocol": "TCP", "port": "54783"},
-                                    "protocol_15" : {"protocol": "TCP", "port": "1194"},
-                                    "protocol_16" : {"protocol": "SSL", "port": "443"}
-                                    }
+            "protocol_1" : {"protocol": "UDP", "port": "443"},
+            "protocol_2" : {"protocol": "UDP", "port": "80"},
+            "protocol_3" : {"protocol": "UDP", "port": "53"},
+            "protocol_4" : {"protocol": "UDP", "port": "1194"},
+            "protocol_5" : {"protocol": "UDP", "port": "54783"},
+            "protocol_6" : {"protocol": "TCP", "port": "443"},
+            "protocol_7" : {"protocol": "TCP", "port": "587"},
+            "protocol_8" : {"protocol": "TCP", "port": "21"},
+            "protocol_9" : {"protocol": "TCP", "port": "22"},
+            "protocol_10" : {"protocol": "TCP", "port": "80"},
+            "protocol_11" : {"protocol": "TCP", "port": "143"},
+            "protocol_12" : {"protocol": "TCP", "port": "3306"},
+            "protocol_13" : {"protocol": "TCP", "port": "8080"},
+            "protocol_14" : {"protocol": "TCP", "port": "54783"},
+            "protocol_15" : {"protocol": "TCP", "port": "1194"},
+            "protocol_16" : {"protocol": "SSL", "port": "443"}
+        }
 
         ws_dict = {"server" : self.windscribe_servers,
-                    "protocol" : self.windscribe_protocols,
-                    "provider" : "Windscribe"
-                    }
+                   "protocol" : self.windscribe_protocols,
+                   "provider" : "Windscribe"
+                   }
 
         self.copy_certs(self.provider)
         self.finished.emit(ws_dict)
@@ -661,7 +661,7 @@ class AddServers(QtCore.QThread):
         headers = {'x-pm-appversion': 'Other',
                    'x-pm-apiversion': '3',
                    'Accept': 'application/vnd.protonmail.v1+json'
-                  }
+                   }
 
         try:
             with requests.Session() as self.session:
@@ -714,13 +714,13 @@ class AddServers(QtCore.QThread):
                     ip = s["Servers"][0]["EntryIP"]
                     self.log.emit(("debug", "importing {}".format(name)))
                     self.proton_servers[name] = {
-                                                    "name" : name,
-                                                    "country" : country,
-                                                    "city": city,
-                                                    "ip" : ip,
-                                                    "provider" : "ProtonVPN",
-                                                    "tunnel": "OpenVPN"
-                                                    }
+                        "name" : name,
+                        "country" : country,
+                        "city": city,
+                        "ip" : ip,
+                        "provider" : "ProtonVPN",
+                        "tunnel": "OpenVPN"
+                    }
 
 
                 cert_url = "https://api.protonmail.ch/vpn/config?Platform=Linux&LogicalID={}&Protocol=udp".format(server_id)
@@ -735,14 +735,14 @@ class AddServers(QtCore.QThread):
                     ta.write(str(ta_key))
 
                 self.proton_protocols = {
-                                        "protocol_1" : {"protocol": "UDP", "port": "1194"},
-                                        "protocol_2" : {"protocol": "TCP", "port": "443"}
-                                        }
+                    "protocol_1" : {"protocol": "UDP", "port": "1194"},
+                    "protocol_2" : {"protocol": "TCP", "port": "443"}
+                }
 
                 proton_dict = {"server" : self.proton_servers,
-                                "protocol" : self.proton_protocols,
-                                "provider" : "ProtonVPN"
-                                }
+                               "protocol" : self.proton_protocols,
+                               "provider" : "ProtonVPN"
+                               }
 
                 self.copy_certs(self.provider)
                 self.finished.emit(proton_dict)
@@ -779,13 +779,13 @@ class AddServers(QtCore.QThread):
 
                 if ip != "Failed to resolve":
                     self.az_servers[name] = {
-                                            "name": name,
-                                            "provider" : self.provider,
-                                            "city" : s["city"],
-                                            "ip" : ip,
-                                            "country" : country,
-                                            "tunnel" : "OpenVPN"
-                                            }
+                        "name": name,
+                        "provider" : self.provider,
+                        "city" : s["city"],
+                        "ip" : ip,
+                        "country" : country,
+                        "tunnel" : "OpenVPN"
+                    }
 
                     crt_url = s["openvpn-ca"]
                     crt_file = "{}/{}.crt".format(self.temp_path, name)
@@ -809,10 +809,10 @@ class AddServers(QtCore.QThread):
 
                     if wg_keys is not None:
                         data = {
-                                'username' : str(self.username),
-                                'password' : str(self.password),
-                                'pubkey' : wg_keys[1]
-                                }
+                            'username' : str(self.username),
+                            'password' : str(self.password),
+                            'pubkey' : wg_keys[1]
+                        }
 
                         pub_up = requests.post(wg_api_url, data=data, timeout=10)
                         if pub_up.status_code == 200:
@@ -821,26 +821,26 @@ class AddServers(QtCore.QThread):
                             if api_resp["status"] != "error":
                                 wg_ip = resolve(api_resp["data"]["Endpoint"].split(":")[0])[0]
                                 wg_conf = [
-                                                "[Interface]\n",
-                                                "PrivateKey = {}\n".format(wg_keys[0]),
-                                                "Address = {}\n".format(api_resp["data"]["Address"]),
-                                                "DNS = {}\n".format(api_resp["data"]["DNS"]),
-                                                "\n",
-                                                "[Peer]\n",
-                                                "PublicKey = {}\n".format(api_resp["data"]["PublicKey"]),
-                                                "Endpoint = {}:51820\n".format(wg_ip),
-                                                "AllowedIPs = 0.0.0.0/0, ::/0\n"
-                                                ]
+                                    "[Interface]\n",
+                                    "PrivateKey = {}\n".format(wg_keys[0]),
+                                    "Address = {}\n".format(api_resp["data"]["Address"]),
+                                    "DNS = {}\n".format(api_resp["data"]["DNS"]),
+                                    "\n",
+                                    "[Peer]\n",
+                                    "PublicKey = {}\n".format(api_resp["data"]["PublicKey"]),
+                                    "Endpoint = {}:51820\n".format(wg_ip),
+                                    "AllowedIPs = 0.0.0.0/0, ::/0\n"
+                                ]
 
                                 self.az_servers[wg_name] = {
-                                                "name": wg_name,
-                                                "provider" : self.provider,
-                                                "city" : s["city"],
-                                                "ip" : wg_ip,
-                                                "country" : country,
-                                                "tunnel" : "WireGuard",
-                                                "path" : "{}/{}.conf".format(self.provider, wg_name)
-                                                }
+                                    "name": wg_name,
+                                    "provider" : self.provider,
+                                    "city" : s["city"],
+                                    "ip" : wg_ip,
+                                    "country" : country,
+                                    "tunnel" : "WireGuard",
+                                    "path" : "{}/{}.conf".format(self.provider, wg_name)
+                                }
 
                                 with open("{}/{}".format(self.temp_path, wg_file), "w") as wg:
                                     wg.writelines(wg_conf)
@@ -866,17 +866,17 @@ class AddServers(QtCore.QThread):
 
         else:
             az_protocols = {
-                            "protocol_1" : {"protocol": "UDP", "port": "1194"},
-                            "protocol_2" : {"protocol": "TCP", "port": "1194"},
-                            "protocol_3" : {"protocol": "UDP", "port": "443"},
-                            "protocol_4" : {"protocol": "TCP", "port": "443"}
-                            }
+                "protocol_1" : {"protocol": "UDP", "port": "1194"},
+                "protocol_2" : {"protocol": "TCP", "port": "1194"},
+                "protocol_3" : {"protocol": "UDP", "port": "443"},
+                "protocol_4" : {"protocol": "TCP", "port": "443"}
+            }
 
             azire_dict = {
-                            "server" : self.az_servers,
-                            "protocol" : az_protocols,
-                            "provider" : "AzireVPN"
-                            }
+                "server" : self.az_servers,
+                "protocol" : az_protocols,
+                "provider" : "AzireVPN"
+            }
 
             self.copy_certs(self.provider)
             self.finished.emit(azire_dict)
@@ -988,36 +988,35 @@ class AddServers(QtCore.QThread):
 
                 conf_file.close()
 
-                with open (conf_copy, "w") as file_edit:
+                with open(conf_copy, "w") as file_edit:
                     file_edit.writelines(modify)
                     file_edit.close()
 
                 if ip != 0:
-
                     country_check = check_output(["geoiplookup", "{}".format(ip)]).decode("utf-8")
                     cc = country_check.split(" ")[3].split(",")[0]
                     country = country_translate(cc)
                     self.log.emit(("debug", "importing {}".format(name)))
                     custom_servers[name] = {
-                                                "name": name,
-                                                "provider" : self.provider,
-                                                "city" : "",
-                                                "path" : "{}/{}".format(self.provider, f),
-                                                "ip" : ip,
-                                                "country" : country,
-                                                "tunnel" : tunnel,
-                                                "port": port.upper().split("\n")[0],
-                                                "protocol": protocol.upper().split("\n")[0]
-                                                }
+                        "name": name,
+                        "provider" : self.provider,
+                        "city" : "",
+                        "path" : "{}/{}".format(self.provider, f),
+                        "ip" : ip,
+                        "country" : country,
+                        "tunnel" : tunnel,
+                        "port": port.upper().split("\n")[0],
+                        "protocol": protocol.upper().split("\n")[0]
+                    }
 
                 else:
                     pass
 
         custom_dict = {
-                        "server" : custom_servers,
-                        "provider" : self.provider,
-                        "failed" : failed_list
-                        }
+            "server" : custom_servers,
+            "provider" : self.provider,
+            "failed" : failed_list
+        }
 
         self.copy_certs(self.provider)
         self.finished.emit(custom_dict)
@@ -1031,7 +1030,7 @@ class AddServers(QtCore.QThread):
                 try:
                     ext = os.path.splitext(f)[1]
                     if ext not in self.extensions:
-                       unrelated_files += 1
+                        unrelated_files += 1
 
                 except IndexError:
                     unrelated_files += 1

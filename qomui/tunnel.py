@@ -571,11 +571,11 @@ class TunnelThread(QtCore.QThread):
         self.log.emit(("info", "SSH: Successfully opened SSH tunnel to {}".format(ip)))
         ssh_exe.wait()
 
-def exe_custom_scripts(stage, provider, config):
+def exe_custom_scripts(stage, provider, conf):
     import logging
 
     try:
-        script = config["{}_scripts".format(provider)][stage]
+        script = conf["{}_scripts".format(provider)][stage]
 
         try:
             run(shlex.split(script))

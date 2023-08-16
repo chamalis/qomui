@@ -1,25 +1,22 @@
 #!/usr/bin/env python3
 
-import sys
-import os
-import time
-import shutil
+import json
 import logging
 import logging.handlers
-import json
-import threading
+import os
+import shutil
 import signal
-import netifaces
-from datetime import date, datetime
-
+import sys
+import threading
+from datetime import datetime
 from subprocess import Popen, PIPE, check_output, check_call, CalledProcessError, STDOUT
 
-import pexpect
+import dbus
+import dbus.service
+import netifaces
 import psutil
 import requests
 from PyQt5 import QtCore
-import dbus
-import dbus.service
 from dbus.mainloop.pyqt5 import DBusQtMainLoop
 
 from qomui import config, firewall, bypass, update, dns_manager, tunnel
@@ -57,6 +54,11 @@ class QomuiDbus(dbus.service.Object):
     interface = netifaces.gateways()['default'][netifaces.AF_INET][1]
 
     def __init__(self):
+        self.dns = None
+        self.dns_2 = None
+        self.dns_bypass = None
+        self.dns_2_bypass = None
+        self.wg_provider = None
 
         if not os.path.exists(LOGDIR):
             os.makedirs(LOGDIR)

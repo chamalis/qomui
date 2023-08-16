@@ -3,6 +3,7 @@
 pre_gateway=$(ip route | awk 'FNR==1 {print $3}')
 while getopts ":f:s" HOP
 do
+     # shellcheck disable=SC2220
      case $HOP in
          f)  
             /sbin/route add -net $2 netmask 255.255.255.255 gw $pre_gateway 

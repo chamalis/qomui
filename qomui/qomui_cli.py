@@ -28,6 +28,7 @@ except AttributeError:
     def _fromUtf8(s):
         return s
 
+
 class QomuiCli(QtCore.QObject):
     hop_server_dict = None
     hop_active = 0
@@ -42,13 +43,13 @@ class QomuiCli(QtCore.QObject):
             self.qomui_service.connect_to_signal("reply", self.openvpn_log_monitor)
             self.qomui_service.connect_to_signal("conn_info", self.openvpn_log_print)
             self.qomui_service.connect_to_signal("imported", self.downloaded)
-
         except dbus.exceptions.DBusException:
             print("Error: qomui-service is not available")
             print('Use "systemctl start qomui" to run the background service')
             print("Exiting...")
             sys.exit(1)
 
+        self.ovpn_dict = None
         self.args = args
         self.arguments(self.args)
 
@@ -63,7 +64,7 @@ class QomuiCli(QtCore.QObject):
             provider = args["set_protocol"]
 
             try:
-                for k,v in protocol_dict[provider].items():
+                for k, v in protocol_dict[provider].items():
                     if k != "selected":
                         number = k.split("_")[1]
                         attrs = ", ".join(v.values())
@@ -223,10 +224,9 @@ class QomuiCli(QtCore.QObject):
         )
         self.qomui_service.set_hop(self.hop_server_dict)
 
-
     def add_server(self, provider):
         path = "None"
-        print("Automatic download is available for the following providers: Airvpn, Mullvad, PIA, Windscribe and ProtonVPN")
+        print(f"Automatic download is available for the following providers: {SUPPORTED_PROVIDERS}")
         if provider not in SUPPORTED_PROVIDERS:
             path = input("Enter path of folder containing config files of {}:\n".format(provider))
             if not os.path.exists(path):

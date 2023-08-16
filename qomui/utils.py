@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import grp
 import getpass
+import grp
 import pwd
 
-from qomui import config
 
 def get_user_group():
     username = getpass.getuser()
     group = grp.getgrgid(pwd.getpwnam(username).pw_gid).gr_name
-    return {"user" : username, "group" : group}
+    return {"user": username, "group": group}
 
-def create_server_dict(current_dict, protocol_dict, SUPPORTED_PROVIDERS):
+
+def create_server_dict(current_dict, protocol_dict, supported_providers):
     provider = current_dict["provider"]
-    if provider in SUPPORTED_PROVIDERS:
+    if provider in supported_providers:
 
         try:
             mode = protocol_dict[provider]["selected"]
@@ -46,8 +46,13 @@ def create_server_dict(current_dict, protocol_dict, SUPPORTED_PROVIDERS):
             except KeyError:
                 ip = current_dict["ip1"]
 
-            current_dict.update({"ip" : ip, "port": port, "protocol": protocol,
-                                    "prot_index": mode, "ipv6" : ipv6, "tlscrypt" : tlscrypt})
+            current_dict.update({
+                "ip": ip,
+                "port": port,
+                "protocol": protocol,
+                "prot_index": mode,
+                "ipv6": ipv6,
+                "tlscrypt": tlscrypt})
 
         elif provider == "Mullvad":
             try:

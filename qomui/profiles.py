@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from typing import Optional
 
 from PyQt5 import QtCore, QtWidgets, QtGui
 
@@ -38,7 +39,7 @@ class EditProfile(QtWidgets.QDialog):
     providers_selected = []
     countries_selected = []
 
-    def __init__(self, protocols=None, countries=None, providers=None, selected=0, parent=None):
+    def __init__(self, protocols=None, countries=None, providers=None, selected: Optional[dict] = None, parent=None):
         super(EditProfile, self).__init__(parent)
         self.protocols = protocols
         self.countries = countries
@@ -102,7 +103,7 @@ class EditProfile(QtWidgets.QDialog):
         self.modeBox.addItem("Fastest")
         self.modeBox.addItem("Fast/Random")
 
-        if self.selected != 0:
+        if self.selected:
             self.countries_selected = self.selected["countries"]
             self.providers_selected = self.selected["providers"]
             self.modeBox.setCurrentText(self.selected["mode"])
@@ -207,16 +208,16 @@ class EditProfile(QtWidgets.QDialog):
         profile_dict["protocol"] = self.chooseProtocolBox.currentText()
         profile_dict["filters"] = self.filterLine.text().split(";")[:-1]
 
-        if self.selected != 0:
+        if self.selected:
             profile_dict["number"] = self.selected["number"]
 
         if profile_dict["name"] == "" or len(self.providers_selected) == 0 or len(self.countries_selected) == 0:
-            err = QtWidgets.QMessageBox.warning(
+            QtWidgets.QMessageBox.warning(
                 self,
                 "Profile incomplete",
                 "Set a profile name & select at least one country and provider",
                 QtWidgets.QMessageBox.Ok
-                )
+            )
         else:
             self.save_profile.emit(profile_dict)
             self.hide()

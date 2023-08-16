@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pre_gateway=$(ip route | awk 'FNR==1 {print $3}')
-while getopts “:f:s” HOP
+while getopts ":f:s" HOP
 do
      case $HOP in
          f)  

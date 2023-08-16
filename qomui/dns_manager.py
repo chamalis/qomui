@@ -12,28 +12,28 @@ def set_dns(server_1, server_2=None, tun=None, main_int=None):
         resolver_check = check_call(["systemctl", "is-active", "systemd-resolved"])
     except (CalledProcessError, FileNotFoundError):
         resolver_check = 1
-    
+
     if resolver_check == 0:
         Popen(["systemctl", "is-active", "--quiet", "systemd-resolved"])
         Popen(["systemd-resolve", "--flush-caches"])
         dns_systemd_cmd = [
-            "systemd-resolve", 
+            "systemd-resolve",
             "--interface={}".format(tun),
             "--set-dns={}".format(server_1)
-            ]
+        ]
 
         if server_2 is not None:
             dns_systemd_cmd.append("--set-dns={}".format(server_2))
 
         dns_systemd_cmd = [
-            "systemd-resolve", 
+            "systemd-resolve",
             "--interface={}".format(main_int),
             "--set-dns={}".format(server_1)
-            ]
+        ]
 
         if server_2 is not None:
             dns_systemd_cmd.append("--set-dns={}".format(server_2))
-        
+
         Popen(dns_systemd_cmd)
         logging.info("DNS: Set {} and {} as dns servers via systemd-resolve".format(server_1, server_2))
 
@@ -42,7 +42,7 @@ def set_dns(server_1, server_2=None, tun=None, main_int=None):
         lines = [
             "#modified by Qomui\n",
             "nameserver {}\n".format(server_1)
-            ]
+        ]
 
         if server_2 is not None:
             lines.append("nameserver {}\n".format(server_2))

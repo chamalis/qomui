@@ -117,13 +117,12 @@ def save_existing_rules(fw_rules):
             if len(rule) != 0:
                 match = 0
                 omit = fw_rules["ipv4rules"] + \
-                    fw_rules["flush"] + fw_rules["ipv4local"]
+                       fw_rules["flush"] + fw_rules["ipv4local"]
                 for x in omit:
                     if Counter(x) == Counter(rule):
                         match = 1
                 if match == 0 and rule not in saved_rules:
                     saved_rules.append(rule)
-                match = 0
 
     except (CalledProcessError, FileNotFoundError) as e:
         logging.error("ip4tables: Could not read active rules - {}".format(e))
@@ -139,7 +138,7 @@ def save_existing_rules_6(fw_rules):
                 if len(rule) != 0:
                     match = 0
                     omit = fw_rules["ipv6rules"] + \
-                        fw_rules["flushv6"] + fw_rules["ipv6local"]
+                           fw_rules["flushv6"] + fw_rules["ipv6local"]
                     for x in omit:
                         if Counter(x) == Counter(rule):
                             match = 1
@@ -213,7 +212,6 @@ def save_iptables():
         save.wait()
         outfile.flush()
         logging.debug("Saved iptables rules")
-
     except (CalledProcessError, FileNotFoundError):
         logging.debug("Failed to save current iptables rules")
 
@@ -226,16 +224,15 @@ def save_iptables():
             save6.wait()
             outfile6.flush()
             logging.debug("Saved ip6tables rules")
-
         except (CalledProcessError, FileNotFoundError):
             logging.debug("Failed to save current ip6tables rules")
 
 
 def restore_iptables():
     try:
-        restore = Popen(
+        Popen(
             ["iptables-restore",
-                "{}/iptables_before.rules".format(config.ROOTDIR)],
+             "{}/iptables_before.rules".format(config.ROOTDIR)],
             stderr=PIPE)
         logging.debug("Restored previous iptables rules")
 
@@ -245,9 +242,10 @@ def restore_iptables():
     if check_ipv6() is True:
 
         try:
-            restore = Popen(["ip6tables-restore",
-                             "{}/ip6tables_before.rules".format(config.ROOTDIR)],
-                            stderr=PIPE)
+            Popen(
+                ["ip6tables-restore",
+                 "{}/ip6tables_before.rules".format(config.ROOTDIR)],
+                stderr=PIPE)
             logging.debug("Restored previous ip6tables rules")
 
         except (CalledProcessError, FileNotFoundError):

@@ -1,25 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys
-import os
+import bisect
 import json
-import re
-import dbus
-import shutil
-import time
-import random
 import logging
+import os
+import random
+import re
+import signal
+import sys
+import time
+from datetime import datetime
 from functools import partial
-from datetime import datetime, date
 from subprocess import CalledProcessError, check_call, check_output
+
+import dbus
 from PyQt5 import QtCore, QtWidgets, QtGui
 from dbus.mainloop.pyqt5 import DBusQtMainLoop
-import bisect
-import signal
 
 from qomui import config, update, latency, utils, firewall, widgets, profiles, monitor
-
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -29,6 +28,7 @@ except AttributeError:
 
 try:
     _encoding = QtWidgets.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtWidgets.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
@@ -42,8 +42,9 @@ JSON_FILE_LIST = [
                   ("profile_dict", "{}/profile.json".format(config.HOMEDIR))
                   ]
 
+
 class DbusLogHandler(logging.Handler):
-    def __init__(self, qomui_service, parent = None):
+    def __init__(self, qomui_service, parent=None):
         super(DbusLogHandler, self).__init__()
         self.qomui_service = qomui_service
 
@@ -54,6 +55,7 @@ class DbusLogHandler(logging.Handler):
 
         except (dbus.exceptions.DBusException, TypeError):
             pass
+
 
 class QomuiGui(QtWidgets.QWidget):
     network_state = 0
@@ -73,24 +75,24 @@ class QomuiGui(QtWidgets.QWidget):
     queue = []
     tunnel_list = ["OpenVPN", "WireGuard"]
     config_list = [
-                   "firewall",
-                   "autoconnect",
-                   "minimize",
-                   "ipv6_disable",
-                   "alt_dns",
-                   "bypass",
-                   "ping",
-                   "auto_update",
-                   "no_dnsmasq",
-                   "dns_off"
-                   ]
+        "firewall",
+        "autoconnect",
+        "minimize",
+        "ipv6_disable",
+        "alt_dns",
+        "bypass",
+        "ping",
+        "auto_update",
+        "no_dnsmasq",
+        "dns_off"
+    ]
 
     routes = {
-            "gateway" : "None",
-            "gateway_6" : "None",
-            "interface" : "None",
-            "interface_6" : "None"
-            }
+        "gateway" : "None",
+        "gateway_6" : "None",
+        "interface" : "None",
+        "interface_6" : "None"
+    }
 
     def __init__(self, parent = None):
         super(QomuiGui, self).__init__(parent)
@@ -107,15 +109,15 @@ class QomuiGui(QtWidgets.QWidget):
         except dbus.exceptions.DBusException:
             self.logger.error('DBus Error: Qomui-Service is currently not available')
             ret = self.messageBox(
-                                "Error: Qomui-service is not active",
-                                "Do you want to start it, enable it permanently or close Qomui?",
-                                buttons = [
-                                            ("Enable", "NoRole"),
-                                            ("Start", "YesRole"),
-                                            ("Close", "RejectRole")
-                                            ],
-                                icon = "Question"
-                                )
+                "Error: Qomui-service is not active",
+                "Do you want to start it, enable it permanently or close Qomui?",
+                buttons = [
+                    ("Enable", "NoRole"),
+                    ("Start", "YesRole"),
+                    ("Close", "RejectRole")
+                ],
+                icon="Question"
+            )
 
             if ret == 0:
                 self.initialize_service("enable", "--now")
@@ -133,9 +135,11 @@ class QomuiGui(QtWidgets.QWidget):
         primay_screen = QtWidgets.QDesktopWidget().primaryScreen()
         primary_screen_geometry = QtWidgets.QDesktopWidget().availableGeometry(primay_screen)
         positioning = primary_screen_geometry.bottomRight()
-        self.setGeometry(QtCore.QRect(positioning.x()-600, positioning.y()-750,
-                                      600, 750
-                                      ))
+        self.setGeometry(
+            QtCore.QRect(
+                positioning.x()-600, positioning.y()-750,
+                600,
+                750))
 
         self.logger.debug('Successfully connected to qomui-service via DBus')
         self.dbus_call("disconnect", "main")
@@ -172,18 +176,17 @@ class QomuiGui(QtWidgets.QWidget):
             if e.get_dbus_name() == "org.freedesktop.DBus.Error.ServiceUnknown":
                 self.notify("Qomui: Dbus Error", "No reply from qomui-service. It may have crashed.", icon="Warning")
                 ret = self.messageBox(
-                                    "Error: Qomui-service is not available",
-                                    "Do you want restart it or quit Qomui?",
-                                    buttons = [
-                                                ("Quit", "NoRole"),
-                                                ("Restart", "YesRole")
-                                                ],
-                                    icon = "Question"
-                                    )
+                    "Error: Qomui-service is not available",
+                    "Do you want restart it or quit Qomui?",
+                    buttons=[
+                        ("Quit", "NoRole"),
+                        ("Restart", "YesRole")
+                    ],
+                    icon="Question"
+                )
 
                 if ret == 0:
                     sys.exit(1)
-
                 elif ret == 1:
                     self.initialize_service("restart")
                     time.sleep(3)
@@ -2148,7 +2151,7 @@ class QomuiGui(QtWidgets.QWidget):
 
         if self.overrideCheck.checkState() == 2:
             self.protocol_dict[provider] = {"protocol" : protocol, "port": port}
-            with open ("{}/protocol.json".format(config.HOMEDIR), "w") as p:
+            with open("{}/protocol.json".format(config.HOMEDIR), "w") as p:
                 json.dump(self.protocol_dict, p)
 
     def pop_delProviderBox(self):
@@ -2170,7 +2173,8 @@ class QomuiGui(QtWidgets.QWidget):
     def set_hop(self, server):
         try:
             current_dict = self.server_dict[server].copy()
-            self.hop_server_dict = utils.create_server_dict(current_dict, self.protocol_dict, config.SUPPORTED_PROVIDERS)
+            self.hop_server_dict = utils.create_server_dict(
+                current_dict, self.protocol_dict, config.SUPPORTED_PROVIDERS)
             self.show_hop_widget()
 
         except KeyError:
@@ -2216,7 +2220,8 @@ class QomuiGui(QtWidgets.QWidget):
 
             if bypass == 1:
                 self.disconnect_bypass()
-                self.bypass_ovpn_dict = utils.create_server_dict(current_dict, self.protocol_dict, config.SUPPORTED_PROVIDERS)
+                self.bypass_ovpn_dict = utils.create_server_dict(
+                    current_dict, self.protocol_dict, config.SUPPORTED_PROVIDERS)
                 self.bypass_ovpn_dict.update({"bypass":"1", "hop":"0"})
 
                 try:
@@ -2234,7 +2239,8 @@ class QomuiGui(QtWidgets.QWidget):
 
             else:
                 self.kill()
-                self.ovpn_dict = utils.create_server_dict(current_dict, self.protocol_dict, config.SUPPORTED_PROVIDERS)
+                self.ovpn_dict = utils.create_server_dict(
+                    current_dict, self.protocol_dict, config.SUPPORTED_PROVIDERS)
 
                 try:
                     if self.ovpn_dict["tunnel"] == "WireGuard":

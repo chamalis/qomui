@@ -104,6 +104,7 @@ class NetMon(QtCore.QThread):
             "interface_6": default_interface_6
         }
 
+
 class TunnelMon(QtCore.QThread):
     stat = QtCore.pyqtSignal(list)
     ip = QtCore.pyqtSignal(dict)
@@ -131,12 +132,9 @@ class TunnelMon(QtCore.QThread):
             try:
                 query = requests.get(check_url, timeout=1).content.decode("utf-8")
                 ip = json.loads(query)["ip"]
-
             except (KeyError, requests.exceptions.RequestException, json.decoder.JSONDecodeError):
-
                 try:
                     ip = requests.get(check_url_alt, timeout=1).content.decode("utf-8").replace("\n", "")
-
                 except requests.exceptions.RequestException:
                     self.log.emit(("info", "Could not determine external ipv4 address"))
                     ip = None
@@ -144,12 +142,9 @@ class TunnelMon(QtCore.QThread):
             try:
                 query = requests.get(check_url_6, timeout=1).content.decode("utf-8")
                 ip_6 = json.loads(query)["ip"]
-
             except (KeyError, requests.exceptions.RequestException, json.decoder.JSONDecodeError):
-
                 try:
                     ip_6 = requests.get(check_url_alt_6, timeout=1).content.decode("utf-8").replace("\n", "")
-
                 except requests.exceptions.RequestException:
                     self.log.emit(("info", "Could not determine external ipv6 address"))
                     ip_6 = None
@@ -158,7 +153,6 @@ class TunnelMon(QtCore.QThread):
                 query = requests.get(check_url_loc, timeout=1).content.decode("utf-8")
                 lat = json.loads(query)["lat"]
                 lon = json.loads(query)["lon"]
-
             except (KeyError, requests.exceptions.RequestException, json.decoder.JSONDecodeError):
                 self.log.emit(("info", "Could not determine location"))
                 lat = 0
@@ -174,9 +168,8 @@ class TunnelMon(QtCore.QThread):
         try:
             counter = psutil.net_io_counters(pernic=True)[self.tun]
             stat = (counter.bytes_recv, counter.bytes_sent)
-
         except KeyError:
-            stat = (0,0)
+            stat = (0, 0)
 
         while connected is True:
             last_stat = stat
@@ -200,7 +193,6 @@ class TunnelMon(QtCore.QThread):
                 DLacc, ULacc = [(now + last) / (1024*1024) for now, last in zip(stat, last_stat)]
                 t0 = time.time()
                 self.stat.emit([DLrate, DLacc, ULrate, ULacc])
-
             except (KeyError, OSError):
                 break
 
@@ -209,18 +201,19 @@ class TunnelMon(QtCore.QThread):
         self.lost.emit()
 
     def time_format(self, e):
-        calc = '{:02d}d {:02d}h {:02d}m {:02d}s'.format(e // 86400,
-                                                        (e % 86400 // 3600),
-                                                        (e % 3600 // 60),
-                                                        e % 60
-                                                        )
+        calc = '{:02d}d {:02d}h {:02d}m {:02d}s'.format(
+            e // 86400,
+            (e % 86400 // 3600),
+            (e % 3600 // 60),
+            e % 60
+        )
         split = calc.split(" ")
 
         if split[0] == "00d" and split[1] == "00h":
-            return ("{} {}".format(split[2], split[3]))
+            return "{} {}".format(split[2], split[3])
 
         elif split[0] == "00d" and split[1] != "00h":
-            return ("{} {}".format(split[1], split[2]))
+            return "{} {}".format(split[1], split[2])
 
         else:
-            return ("{} {}".format(split[0], split[1]))
+            return "{} {}".format(split[0], split[1])

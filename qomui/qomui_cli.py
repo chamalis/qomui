@@ -14,7 +14,7 @@ from PyQt5 import QtCore, Qt
 from subprocess import Popen, PIPE
 import getpass
 import signal
-from qomui import utils, update, config
+from qomui import utils, update
 
 ROOTDIR = "/usr/share/qomui"
 HOMEDIR = "{}/.qomui".format(os.path.expanduser("~"))

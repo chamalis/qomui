@@ -226,7 +226,7 @@ class QomuiDbus(dbus.service.Object):
 
         if env == "main":
             self.restore_default_dns()
-            self.tun is None
+            self.tun = None
             for i in self.pid_list:
                 if i[1] != "OpenVPN_bypass":
                     self.kill_pid(i)

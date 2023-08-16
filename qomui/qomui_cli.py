@@ -14,10 +14,11 @@ from PyQt5 import QtCore, Qt
 from subprocess import Popen, PIPE
 import getpass
 import signal
-from qomui import utils, update
+from qomui import utils, update, config
 
 ROOTDIR = "/usr/share/qomui"
 HOMEDIR = "{}/.qomui".format(os.path.expanduser("~"))
+# TODO SUPPORTED_PROVIDERS is redefined from config.py - is it different for cli/gui?
 SUPPORTED_PROVIDERS = ["Airvpn", "Mullvad", "PIA", "ProtonVPN", "Windscribe"]
 app = QtCore.QCoreApplication(sys.argv)
 
@@ -193,9 +194,11 @@ class QomuiCli(QtCore.QObject):
         do(line)
 
     def establish_connection(self, server):
-        self.ovpn_dict = utils.create_server_dict(self.server_dict[server],
-                                                                self.protocol_dict
-                                                                )
+        self.ovpn_dict = utils.create_server_dict(
+            self.server_dict[server],
+            self.protocol_dict,
+            SUPPORTED_PROVIDERS
+        )
 
         if self.hop_server_dict is not None:
             self.ovpn_dict.update({"hop":"2"})
@@ -213,9 +216,11 @@ class QomuiCli(QtCore.QObject):
             pass
 
     def set_hop(self, server):
-        self.hop_server_dict = utils.create_server_dict(self.server_dict[server],
-                                                                    self.protocol_dict
-                                                                    )
+        self.hop_server_dict = utils.create_server_dict(
+            self.server_dict[server],
+            self.protocol_dict,
+            SUPPORTED_PROVIDERS
+        )
         self.qomui_service.set_hop(self.hop_server_dict)
 
 

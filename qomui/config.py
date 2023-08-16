@@ -31,6 +31,7 @@ default_settings = {
     "fw_gui_only": 0,
     "log_level": "Info"
 }
+settings = None
 
 
 def load_config():

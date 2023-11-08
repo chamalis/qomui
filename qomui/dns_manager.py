@@ -81,7 +81,7 @@ def dnsmasq(interface, port, server_1, server_2, pid):
 
 def dns_request_exception(action, dns_1, dns_2, port):
     rules = []
-    protocols = ["udp", "tcp"]
+    protocols = ("udp", "tcp")
 
     if action == "-I":
         logging.info("iptables: adding exception for DNS requests")

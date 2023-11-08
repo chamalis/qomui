@@ -20,11 +20,10 @@ class NetMon(QtCore.QThread):
     def run(self):
         net_iface_dir = "/sys/class/net/"
         net_check = 0
-        i = "None"
 
         while True:
             prior = net_check
-            i = "None"
+            # i = "None"
             net_check = 0
             routes = {
                 "gateway": "None",
@@ -39,7 +38,7 @@ class NetMon(QtCore.QThread):
 
                         if n.read() == "up\n":
                             net_check = 1
-                            i = iface
+                            # i = iface
 
                 if prior != net_check and net_check == 1:
                     routes = self.default_gateway_check()

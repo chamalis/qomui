@@ -44,5 +44,5 @@ def load_config():
                 if k not in settings.keys():
                     settings[k] = v
 
-    except (FileNotFoundError, json.decoder.JSONDecodeError) as e:
+    except (FileNotFoundError, json.decoder.JSONDecodeError):
         settings = default_settings

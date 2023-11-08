@@ -106,7 +106,7 @@ class PlotArea(QtWidgets.QWidget):
         for i, p in enumerate(self.down_values[1:]):
             x = start_x - self.gap*(i+1)
             y = self.hmax - (p / scale_y)
-            self.down_path.lineTo(x,y)
+            self.down_path.lineTo(x, y)
 
         self.update()
 

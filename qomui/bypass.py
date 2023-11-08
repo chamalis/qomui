@@ -12,14 +12,14 @@ cls_id = "0x00110011"
 interface = None
 
 
-def create_cgroup(user, group, interface, gw=None, gw_6=None, default_int=None, no_dnsmasq=0):
-    logging.info("Creating bypass for {}".format(interface))
+def create_cgroup(user, group, iface, gw=None, gw_6=None, default_int=None, no_dnsmasq=0):
+    logging.info("Creating bypass for {}".format(iface))
     delete_cgroup(default_int)
     cgroup_iptables = [
         ["-t", "mangle", "-A", "OUTPUT", "-m", "cgroup",
          "--cgroup", "0x00110011", "-j", "MARK", "--set-mark", "11"],
         ["-t", "nat", "-A", "POSTROUTING", "-m", "cgroup",
-         "--cgroup", "0x00110011", "-o", "{}".format(interface), "-j", "MASQUERADE"],
+         "--cgroup", "0x00110011", "-o", "{}".format(iface), "-j", "MASQUERADE"],
         ["-I", "OUTPUT", "1", "-m", "cgroup",
          "--cgroup", "0x00110011", "-j", "ACCEPT"],
         ["-I", "INPUT", "1", "-m", "cgroup",
@@ -43,6 +43,7 @@ def create_cgroup(user, group, interface, gw=None, gw_6=None, default_int=None, 
             setcid.close()
             logging.debug("Bypass: Created cgroup 'net_cls:bypass_qomui'")
 
+    
     with open("/etc/iproute2/rt_tables") as rt_check:
         if "11 bypass_qomui" not in rt_check.read():
             rt_check.close()
@@ -106,7 +107,7 @@ def create_cgroup(user, group, interface, gw=None, gw_6=None, default_int=None, 
         logging.debug("Bypass: Configured cgroup access for {}".format(user))
         logging.info("Successfully created cgroup for {}".format(interface))
 
-    except (CalledProcessError, FileNotFoundError) as e:
+    except (CalledProcessError, FileNotFoundError):
         logging.error("Creating cgroup failed - is libcgroup installed?")
 
 

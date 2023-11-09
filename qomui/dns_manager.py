@@ -35,7 +35,9 @@ def set_dns(server_1, server_2=None, tun=None, main_int=None):
             dns_systemd_cmd.append("--set-dns={}".format(server_2))
 
         Popen(dns_systemd_cmd)
-        logging.info("DNS: Set {} and {} as dns servers via systemd-resolve".format(server_1, server_2))
+        logging.info(
+            "DNS: Set {} and {} as dns servers via systemd-resolve".format(
+                server_1, server_2))
 
     else:
         resolv = open("/etc/resolv.conf", "w")
@@ -49,7 +51,8 @@ def set_dns(server_1, server_2=None, tun=None, main_int=None):
 
         resolv.writelines(lines)
         logging.info(
-            "DNS: Overwriting /etc/resolv.conf with {} and {}".format(server_1, server_2))
+            "DNS: Overwriting /etc/resolv.conf with {} and {}".format(
+                server_1, server_2))
 
 
 def dnsmasq(interface, port, server_1, server_2, pid):

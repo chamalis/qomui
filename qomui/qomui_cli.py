@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys
-import os
-import dbus
 import argparse
-import readline
-import json
-import time
-import shutil
-from dbus.mainloop.pyqt5 import DBusQtMainLoop
-from PyQt5 import QtCore, Qt
-from subprocess import Popen, PIPE
 import getpass
+import json
+import os
+import readline
 import signal
-from qomui import utils, update
+import sys
+
+import dbus
+from PyQt5 import QtCore
+from dbus.mainloop.pyqt5 import DBusQtMainLoop
+
+from qomui import utils
 
 ROOTDIR = "/usr/share/qomui"
 HOMEDIR = "{}/.qomui".format(os.path.expanduser("~"))

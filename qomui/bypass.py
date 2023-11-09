@@ -43,7 +43,6 @@ def create_cgroup(user, group, iface, gw=None, gw_6=None, default_int=None, no_d
             setcid.close()
             logging.debug("Bypass: Created cgroup 'net_cls:bypass_qomui'")
 
-    
     with open("/etc/iproute2/rt_tables") as rt_check:
         if "11 bypass_qomui" not in rt_check.read():
             rt_check.close()

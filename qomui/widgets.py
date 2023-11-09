@@ -284,6 +284,7 @@ class HopWidget(QtWidgets.QWidget):
     def signal(self):
         self.clear.emit()
 
+
 class ProgressBarWidget(QtWidgets.QWidget):
     abort = QtCore.pyqtSignal(str)
 
@@ -321,6 +322,7 @@ class ProgressBarWidget(QtWidgets.QWidget):
 
     def cancel(self):
         self.abort.emit(self.action)
+
 
 class ActiveWidget(QtWidgets.QWidget):
     disconnect = QtCore.pyqtSignal()
@@ -419,6 +421,7 @@ class ActiveWidget(QtWidgets.QWidget):
     def signal(self):
         self.disconnect.emit()
 
+
 class LineWidget(QtWidgets.QWidget):
 
     def __init__ (self, parent=None):
@@ -429,6 +432,7 @@ class LineWidget(QtWidgets.QWidget):
         self.setAutoFillBackground(True)
         self.setFixedHeight(1)
         #self.setBackgroundRole(self.palette().Highlight)
+
 
 class StatusOffWidget(QtWidgets.QWidget):
     def __init__ (self, parent=None):
@@ -465,6 +469,7 @@ class StatusOffWidget(QtWidgets.QWidget):
         icon = QtGui.QIcon.fromTheme("qomui_off")
         self.qIconLabel.setPixmap(icon.pixmap(300,300))
 
+
 class ColoredRect(QtWidgets.QFrame):
     def __init__ (self, color, parent=None):
         super(ColoredRect, self).__init__(parent)
@@ -475,6 +480,7 @@ class ColoredRect(QtWidgets.QFrame):
         self.setPalette(palette)
         self.setFixedSize(10,10)
         self.setAutoFillBackground(True)
+
 
 class StatusOnWidget(QtWidgets.QWidget):
     reconnect = QtCore.pyqtSignal()
@@ -690,6 +696,7 @@ class StatusOnWidget(QtWidgets.QWidget):
 
     def check_for_update(self):
         self.check_update.emit()
+
 
 class FirewallEditor(QtWidgets.QDialog):
     fw_change = QtCore.pyqtSignal(dict)
@@ -931,6 +938,7 @@ class AppSelector(QtWidgets.QDialog):
     def chosen(self):
         self.app_chosen.emit(self.bypassAppList[self.appListWidget.currentRow()])
         self.hide()
+
 
 class ModifyServer(QtWidgets.QDialog):
     modified = QtCore.pyqtSignal(dict)

@@ -2485,7 +2485,7 @@ class QomuiGui(QtWidgets.QWidget):
         except (KeyError, AttributeError):
             pass
 
-    def kill_hop():
+    def kill_hop(self):
         pass
 
     def kill_bypass(self):

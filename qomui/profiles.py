@@ -19,6 +19,7 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtWidgets.QApplication.translate(context, text, disambig)
 
+
 class ComboCheckBox(QtWidgets.QComboBox):
 
     def __init__(self, parent=None):

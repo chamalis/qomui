@@ -277,12 +277,16 @@ class AddServers(QtCore.QThread):
             self.failed.emit("Network error&No internet connection&{}".format(self.provider))
 
     def mullvad(self):
-        self.allow_ip(["api.mullvad.net", "mullvad.net", "raw.githubusercontent.com"])
+        self.allow_ip(
+            ["api.mullvad.net", "mullvad.net", "raw.githubusercontent.com"])
         self.mullvad_servers = {}
         self.password = "m"
         self.log.emit(("info", "Downloading certificates for Mullvad"))
         auth = 0
-        certificates = {"ca.crt":"mullvad_ca.crt" ,"api_root_ca.pem":"mullvad_crl.pem"}
+        certificates = {
+            "ca.crt": "mullvad_ca.crt",
+            "api_root_ca.pem": "mullvad_crl.pem"
+        }
         with requests.Session() as self.session:
             try:
                 certfiles = ["ca.crt", "api_root_ca.pem"]
@@ -388,7 +392,6 @@ class AddServers(QtCore.QThread):
                             self.failed.emit(m)
                             auth = 1
 
-
                 except (CalledProcessError, FileNotFoundError) as e:
                     self.log.emit(("info", "WireGuard is not installed/not found - skipping"))
                     for s in wg_list:
@@ -396,9 +399,9 @@ class AddServers(QtCore.QThread):
 
                 if auth == 0:
                     Mullvad_dict = {
-                        "server" : self.mullvad_servers,
-                        "protocol" : self.mullvad_protocols,
-                        "provider" : "Mullvad"
+                        "server": self.mullvad_servers,
+                        "protocol": self.mullvad_protocols,
+                        "provider": "Mullvad"
                     }
 
                     self.copy_certs(self.provider)
@@ -425,7 +428,7 @@ class AddServers(QtCore.QThread):
         self.pia_protocols = {}
         self.log.emit(("info", "Downloading PIA config files"))
         url_ip = "https://www.privateinternetaccess.com/openvpn/openvpn-ip.zip"
-        url_strong =  "https://www.privateinternetaccess.com/openvpn/openvpn-strong.zip"
+        url_strong = "https://www.privateinternetaccess.com/openvpn/openvpn-strong.zip"
 
         try:
             with requests.Session() as self.session:
@@ -882,8 +885,12 @@ class AddServers(QtCore.QThread):
             self.finished.emit(azire_dict)
 
     def add_folder(self):
-        self.conf_files = [f for f in os.listdir(self.folderpath) if f.endswith('.ovpn') or f.endswith('.conf')]
-        self.cert_files = [f for f in os.listdir(self.folderpath) if f.endswith('.ovpn') or f.endswith('.conf')]
+        self.conf_files = [
+            f for f in os.listdir(self.folderpath)
+            if f.endswith('.ovpn') or f.endswith('.conf')]
+        self.cert_files = [
+            f for f in os.listdir(self.folderpath)
+            if f.endswith('.ovpn') or f.endswith('.conf')]
 
         if len(self.conf_files) == 0:
             m = "Import Error&No config files found or folder seems\nto contain many unrelated files&{}".format(self.provider)
